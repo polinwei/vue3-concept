@@ -1,33 +1,57 @@
 const app = Vue.createApp({
-  data(){
+  data() {
     return {
-      cart:0,
-      product: 'Socks',
-      image: './assets/images/socks_green.jpg',      
-      inStock: true,
-      activeClass: true,
-      details: ['50% cotton', '30% wool', '20% polyester'],
+      cart: 0,
+      product: "Socks",
+      brand: "Vue3 Learning",
+      selectedVariant: 0,
+      details: ["50% cotton", "30% wool", "20% polyester"],
       variants: [
-        { id: 2234, color: 'green', image: './assets/images/socks_green.jpg' },
-        { id: 2235, color: 'blue', image: './assets/images/socks_blue.jpg' },
-      ]
-    }
+        {
+          id: 2234,
+          color: "green",
+          image: "./assets/images/socks_green.jpg",
+          quantity: 50,
+        },
+        {
+          id: 2235,
+          color: "blue",
+          image: "./assets/images/socks_blue.jpg",
+          quantity: 0,
+        },
+      ],
+      // solution
+      onSale: true,
+      // solution
+    };
   },
   methods: {
     addToCart() {
-        this.cart += 1
+      this.cart += 1;
+    },
+    updateVariant(index) {
+      this.selectedVariant = index;
+    },
+  },
+  computed: {
+    title() {
+      return this.brand + " " + this.product;
+    },
+    image() {
+      return this.variants[this.selectedVariant].image;
+    },
+    inStock() {
+      return this.variants[this.selectedVariant].quantity;
     },
     // solution
-    removeFromCart() {
-        if (this.cart >= 1) {
-            this.cart -= 1
-        }
+    sale() {
+      if (this.onSale) {
+        return this.brand + " " + this.product + " is on sale.";
+      }
+      return "";
     },
     // solution
-    updateImage(variantImage) {
-        this.image = variantImage
-    }
-  }
-})
+  },
+});
 
-const mountedApp = app.mount('#app')
+const mountedApp = app.mount("#app");
