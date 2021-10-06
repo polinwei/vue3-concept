@@ -14,13 +14,16 @@ app.component('product-display', {
       </div>
       <div class="product-info">
         <h1>{{ title }}</h1>
-        <p v-if="inStock">In Stock</p>
-        <p v-else>Out of Stock</p>
+        <p>          
+          <span v-if="inStock">In Stock</span>
+          <span v-else>Out of Stock</span>
+          <p>
+            {{ variants[selectedVariant].color }} Inventory: {{ variants[selectedVariant].quantity }} </p>
+          </p>
         <p>Shipping: {{ shipping }}</p>
-        
-        <!-- solution -->
-        <product-details :details="details"></product-details>
-        <!-- solution -->
+        <ul>
+          <li v-for="detail in details">{{ detail }}</li>
+        </ul>
         <div 
           v-for="(variant, index) in variants" 
           :key="variant.id" 
@@ -36,25 +39,43 @@ app.component('product-display', {
           v-on:click="addToCart">
           Add to Cart
         </button>
+        <!-- solution -->
+        <button 
+        class="button" 
+        :class="{ disabledButton: !inStock }" 
+        :disabled="!inStock" 
+        @click="removeFromCart">
+        Remove Item
+      </button>
+      <!-- solution -->
       </div>
     </div>
   </div>`,
   data() {
     return {
         product: 'Socks',
-        brand: 'Vue Mastery',
+        brand: 'Vue3 Learning',
         selectedVariant: 0,
         details: ['50% cotton', '30% wool', '20% polyester'],
         variants: [
-          { id: 2234, color: 'green', image: './assets/images/socks_green.jpg', quantity: 50 },
-          { id: 2235, color: 'blue', image: './assets/images/socks_blue.jpg', quantity: 0 },
+          { id: 2234, color: 'green', image: './assets/images/socks_green.jpg', quantity: 10, inventory: 10 },
+          { id: 2235, color: 'blue', image: './assets/images/socks_blue.jpg', quantity: 0, inventory: 0 },
         ]
     }
   },
   methods: {
       addToCart() {
-          this.cart += 1
+        this.variants[this.selectedVariant].quantity -= 1
+        this.$emit('add-to-cart', this.variants[this.selectedVariant].id)
       },
+      // solution
+      removeFromCart() {
+        if (this.variants[this.selectedVariant].quantity < this.variants[this.selectedVariant].inventory) {
+          this.variants[this.selectedVariant].quantity += 1
+        }        
+        this.$emit('remove-from-cart', this.variants[this.selectedVariant].id)
+      },
+      // solution
       updateVariant(index) {
           this.selectedVariant = index
       }
@@ -68,6 +89,9 @@ app.component('product-display', {
       },
       inStock() {
           return this.variants[this.selectedVariant].quantity
+      },
+      isCartEmpty() {
+
       },
       shipping() {
         if (this.premium) {
