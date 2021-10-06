@@ -50,17 +50,20 @@ app.component('product-display', {
       <!-- solution -->
       </div>
     </div>
+    <review-list v-if="reviews.length" :reviews="reviews"></review-list>
+    <review-form @review-submitted="addReview"></review-form>
   </div>`,
   data() {
     return {
-        product: 'Socks',
-        brand: 'Vue3 Learning',
-        selectedVariant: 0,
-        details: ['50% cotton', '30% wool', '20% polyester'],
-        variants: [
-          { id: 2234, color: 'green', image: './assets/images/socks_green.jpg', quantity: 10, inventory: 10 },
-          { id: 2235, color: 'blue', image: './assets/images/socks_blue.jpg', quantity: 0, inventory: 0 },
-        ]
+      product: 'Socks',
+      brand: 'Vue3 Learning',
+      selectedVariant: 0,
+      details: ['50% cotton', '30% wool', '20% polyester'],
+      variants: [
+        { id: 2234, color: 'green', image: './assets/images/socks_green.jpg', quantity: 10, inventory: 10 },
+        { id: 2235, color: 'blue', image: './assets/images/socks_blue.jpg', quantity: 0, inventory: 0 },
+      ],
+      reviews: []
     }
   },
   methods: {
@@ -68,16 +71,17 @@ app.component('product-display', {
         this.variants[this.selectedVariant].quantity -= 1
         this.$emit('add-to-cart', this.variants[this.selectedVariant].id)
       },
-      // solution
       removeFromCart() {
         if (this.variants[this.selectedVariant].quantity < this.variants[this.selectedVariant].inventory) {
           this.variants[this.selectedVariant].quantity += 1
         }        
         this.$emit('remove-from-cart', this.variants[this.selectedVariant].id)
       },
-      // solution
       updateVariant(index) {
           this.selectedVariant = index
+      },
+      addReview(review) {
+        this.reviews.push(review)
       }
   },
   computed: {
@@ -89,9 +93,6 @@ app.component('product-display', {
       },
       inStock() {
           return this.variants[this.selectedVariant].quantity
-      },
-      isCartEmpty() {
-
       },
       shipping() {
         if (this.premium) {
